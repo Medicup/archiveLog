@@ -1,0 +1,58 @@
+#!/bin/bash -x
+#Author: Stephen J Kennedy
+#Version 1.0
+
+#global variables
+DATE=$(date +"%F")
+LOGPATH=/bin/custom/log
+ARCHIVEFILE=${DATE}.tar.gz
+
+#function to check if there is a temp directory in place
+#if not, it will create a temp in the logpath
+fDIRCHECK(){
+if [ ! -d temp ]
+   then
+      mkdir temp || return 1
+fi
+}
+
+#If any log files exist they will be moved to the temp directory
+fFILEMV(){
+cd $LOGPATH
+if [ -f *log ]
+then
+   for FILE in *log
+   do
+      echo $FILE
+      mv $FILE ${LOGPATH}/temp || return 2
+done
+else
+   echo "no log files observed"
+fi
+}
+
+#Archive log files. Cron is set to run monthly to archive the logs
+fZIP(){
+   tar czvf ${LOGPATH}/${ARCHIVEFILE} ${LOGPATH}/temp || return 3
+}
+
+#Removes log files that have been successfully archived
+fFLUSH(){
+   cd $LOGPATH/temp
+if [ -f *log ]
+   then
+      for RMFILE in *log
+      do
+         echo "deleting $RMFILE"
+         rm $RMFILE || return 3
+       done
+   echo "no log files observed"
+fi
+}
+
+fDIRCHECK
+fFILEMV
+fZIP
+fFLUSH
+
+exit 0
