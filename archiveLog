@@ -5,7 +5,7 @@
 #global variables
 DATE=$(date +"%F")
 LOGPATH=/bin/custom/log
-ARCHIVEFILE=${DATE}.tar.gz
+ARCHIVEFILE=${DATE}log.tar.gz
 
 #function to check if there is a temp directory in place
 #if not, it will create a temp in the logpath
